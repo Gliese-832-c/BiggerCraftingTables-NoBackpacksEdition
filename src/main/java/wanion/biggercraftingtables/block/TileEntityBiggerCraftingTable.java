@@ -11,6 +11,7 @@ package wanion.biggercraftingtables.block;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
+import wanion.biggercraftingtables.Config;
 import wanion.lib.common.WTileEntity;
 
 import javax.annotation.Nonnull;
@@ -20,7 +21,7 @@ public abstract class TileEntityBiggerCraftingTable extends WTileEntity implemen
 	@Override
 	public int getInventoryStackLimit()
 	{
-		return 64;
+		return Config.INSTANCE.stackSize;
 	}
 
 	@Nonnull
