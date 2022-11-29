@@ -44,11 +44,16 @@ public class BiggerCraftingTables
 	public static final CreativeTabs creativeTabs = new CreativeTabs(MOD_ID)
 	{
 		@Override
+		public ItemStack createIcon() {
+			return new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 0);
+		}
+
+		/*//@Override
 		@SideOnly(Side.CLIENT)
 		public ItemStack getTabIconItem()
 		{
 			return new ItemStack(BlockBiggerCraftingTable.INSTANCE, 1, 0);
-		}
+		}*/
 	};
 
 	@Mod.Instance

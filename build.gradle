@@ -1,77 +1,121 @@
 buildscript {
     repositories {
-        jcenter()
-        maven { url = "http://files.minecraftforge.net/maven" }
+        maven {
+            // url = 'https://maven.cleanroommc.com'
+            url = 'https://maven.minecraftforge.net'
+        }
+        maven {
+            url = 'https://repo.spongepowered.org/maven'
+        }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:2.3.4'
+        if (project.use_mixins.toBoolean()) {
+            classpath 'org.spongepowered:mixingradle:0.6-SNAPSHOT'
+        }
     }
 }
+
 apply plugin: 'net.minecraftforge.gradle.forge'
-//Only edit below this line, the above code adds and enables the necessary things for Forge to be setup.
 
+if (project.use_mixins.toBoolean()) {
+    apply plugin: 'org.spongepowered.mixin'
+}
 
-version = "1.12.2-2.3b"
-group = "wanion.biggercraftingtables" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
-archivesBaseName = "BiggerCraftingTables"
+version = project.mod_version
+group = project.maven_group
+archivesBaseName = project.archives_base_name
 
 sourceCompatibility = targetCompatibility = '1.8' // Need this here so eclipse task generates correctly.
+
 compileJava {
     sourceCompatibility = targetCompatibility = '1.8'
 }
 
+configurations {
+    embed
+    implementation.extendsFrom(embed)
+}
+
 minecraft {
-    version = "1.12.2-14.23.5.2838"
+    version = "1.12.2-14.23.5.2847"
     runDir = "run"
-    
-    // the mappings can be changed at any time, and must be in the following format.
-    // snapshot_YYYYMMDD   snapshot are built nightly.
-    // stable_#            stables are built at the discretion of the MCP team.
-    // Use non-default mappings at your own risk. they may not always work.
-    // simply re-run your setup task after changing the mappings to update your workspace.
-    mappings = "snapshot_20171003"
-    makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
+    mappings = 'stable_39'
+    def args = []
+    if (project.use_coremod.toBoolean()) {
+        args << '-Dfml.coreMods.load=' + coremod_plugin_class_name
+    }
+    if (project.use_mixins.toBoolean()) {
+        args << '-Dmixin.hotSwap=true'
+        args << '-Dmixin.checks.interfaces=true'
+        args << '-Dmixin.debug.export=true'
+    }
+    clientJvmArgs.addAll(args)
+    serverJvmArgs.addAll(args)
+}
+
+repositories {
+    maven {
+        url = 'https://maven.cleanroommc.com'
+    }
+    maven {
+        url = 'https://repo.spongepowered.org/maven'
+    }
 }
 
 dependencies {
-    // you may put jars on which you depend on in ./libs
-    // or you may define them like so..
-    //compile "some.group:artifact:version:classifier"
-    //compile "some.group:artifact:version"
-      
-    // real examples
-    //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
-    //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
+    if (project.use_assetmover.toBoolean()) {
+        compile 'com.cleanroommc:assetmover:2.0'
+    }
+    if (project.use_mixins.toBoolean()) {
+        compile 'zone.rong:mixinbooter:7.0'
+    }
+}
 
-    // the 'provided' configuration is for optional dependencies that exist at compile-time but might not at runtime.
-    //provided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
+sourceSets {
 
-    // the deobf configurations:  'deobfCompile' and 'deobfProvided' are the same as the normal compile and provided,
-    // except that these dependencies get remapped to your current MCP mappings
-    //deobfCompile 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-    //deobfProvided 'com.mod-buildcraft:buildcraft:6.0.8:dev'
-
-    // for more info...
-    // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
-    // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    main {
+        ext.refMap = 'mixins.' + archives_base_name + '.refmap.json'
+    }
 
 }
 
 processResources {
     // this will ensure that this task is redone when the versions change.
-    inputs.property "version", project.version
-    inputs.property "mcversion", project.minecraft.version
-
+    inputs.property 'version', project.version
+    inputs.property 'mcversion', project.minecraft.version
     // replace stuff in mcmod.info, nothing else
     from(sourceSets.main.resources.srcDirs) {
         include 'mcmod.info'
-                
         // replace version and mcversion
         expand 'version':project.version, 'mcversion':project.minecraft.version
     }
-        
     // copy everything else except the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+
+    if (project.use_access_transformer.toBoolean()) {
+        rename '(.+_at.cfg)', 'META-INF/$1' // Access Transformers
+    }
+}
+
+jar {
+    manifest {
+        def attribute_map = [:]
+        if (project.use_coremod.toBoolean()) {
+            attribute_map['FMLCorePlugin'] = project.coremod_plugin_class_name
+            if (project.include_mod.toBoolean()) {
+                attribute_map['FMLCorePluginContainsFMLMod'] = true
+                attribute_map['ForceLoadAsMod'] = project.gradle.startParameter.taskNames[0] == "build"
+            }
+        }
+        if (project.use_mixins.toBoolean()) {
+            attribute_map['TweakClass'] = 'org.spongepowered.asm.launch.MixinTweaker'
+        }
+        if (project.use_access_transformer.toBoolean()) {
+            attribute_map['FMLAT'] = project.archives_base_name + '_at.cfg'
+        }
+        attributes(attribute_map)
     }
 }

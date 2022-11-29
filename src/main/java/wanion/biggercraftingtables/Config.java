@@ -24,14 +24,19 @@ public final class Config
 	public final int powerMultiplier;
 	public final int capacityMultiplier;
 
+	public final boolean shouldKeepContents;
+
 	private Config()
 	{
 		final Configuration config = new Configuration(new File("." + separatorChar + "config" + separatorChar + Reference.MOD_NAME.replace(" ", Strings.EMPTY) + ".cfg"), Reference.MOD_VERSION);
 
-		createTableRecipes = config.getBoolean("createTableRecipes", Configuration.CATEGORY_GENERAL, true, "should be created recipes for the Tables?");
+		createTableRecipes = config.getBoolean("createTableRecipes", Configuration.CATEGORY_GENERAL, true, "Should be created recipes for the Tables?");
 		powerMultiplier = config.getInt("powerMultiplier", Configuration.CATEGORY_GENERAL, 10, 1, Short.MAX_VALUE, "Formula: powerConsumption = craftingSlotAmount * powerMultiplier");
 		capacityMultiplier = config.getInt("capacityMultiplier", Configuration.CATEGORY_GENERAL, 100, 1, Short.MAX_VALUE, "Formula: capacity = powerConsumption * capacityMultiplier");
-		config.setCategoryPropertyOrder(Configuration.CATEGORY_GENERAL, Arrays.asList("createTableRecipes", "powerMultiplier", "capacityMultiplier"));
+
+		shouldKeepContents = config.getBoolean("shouldKeepContents", Configuration.CATEGORY_GENERAL, false, "Should the tables keep their contents when Broken? Note: As of currently, items inside of tables get deleted when the table is broken. I was not bothered to spend time figuring out how to convert the NBT tag to an array of ItemStacks to spawn into the world as entities.");
+
+		config.setCategoryPropertyOrder(Configuration.CATEGORY_GENERAL, Arrays.asList("createTableRecipes", "powerMultiplier", "capacityMultiplier", "shouldKeepContents"));
 
 		if (config.hasChanged())
 			config.save();

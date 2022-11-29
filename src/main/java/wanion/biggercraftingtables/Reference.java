@@ -20,13 +20,13 @@ import static java.io.File.separatorChar;
 
 public final class Reference
 {
-	public static final String MOD_VERSION = "1.12.2-2.3b";
+	public static final String MOD_VERSION = "1.12.2-3.0";
 	public static final String DEPENDENCIES = "required-before:crafttweaker;required-after:wanionlib@[1.12.2-2.5,)";
 	public static final String TARGET_MC_VERSION = "[1.12,]";
 	public static final String CLIENT_PROXY = "wanion.biggercraftingtables.proxy.ClientProxy";
 	public static final String SERVER_PROXY = "wanion.biggercraftingtables.proxy.CommonProxy";
 	public static final String MOD_ID = "biggercraftingtables";
-	public static final String MOD_NAME = "Bigger Crafting Tables";
+	public static final String MOD_NAME = "Bigger Crafting Tables - No Backpacks Edition";
 	public static final Random RANDOM = new Random();
 	public static final PropertyEnum<TableTypes> TABLE_TYPES = PropertyEnum.create("tabletypes", TableTypes.class);
 	public static final ResourceLocation GUI_TEXTURES = new ResourceLocation(MOD_ID, "textures/gui/gui_textures.png");

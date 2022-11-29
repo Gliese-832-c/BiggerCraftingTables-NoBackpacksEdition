@@ -26,7 +26,7 @@ public final class ItemBlockAutoBiggerCraftingTable extends ItemBlock
 	}
 
 	@Override
-	public String getUnlocalizedName(final ItemStack itemStack)
+	public String getUnlocalizedNameInefficiently(final ItemStack itemStack)
 	{
 		return "container.auto" + Reference.TableTypes.getName(getDamage(itemStack)) + "craftingtable";
 	}

@@ -28,6 +28,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.internal.FMLNetworkHandler;
 import wanion.biggercraftingtables.BiggerCraftingTables;
+import wanion.biggercraftingtables.Config;
 import wanion.biggercraftingtables.Reference;
 import wanion.biggercraftingtables.block.big.TileEntityBigCreatingTable;
 import wanion.biggercraftingtables.block.giant.TileEntityGiantCreatingTable;
@@ -120,7 +121,7 @@ public final class BlockBiggerCreatingTable extends BlockContainer
 	@Override
 	public void getSubBlocks(final CreativeTabs creativeTabs, final NonNullList<ItemStack> items)
 	{
-		if (creativeTabs == this.getCreativeTabToDisplayOn())
+		if (creativeTabs == this.getCreativeTab())
 			for (int i = 0; i < Reference.TableTypes.values().length; i++)
 				items.add(new ItemStack(this, 1, i));
 	}
@@ -153,9 +154,11 @@ public final class BlockBiggerCreatingTable extends BlockContainer
 		final TileEntityBiggerCreatingTable<?> tileEntityBiggerCreatingTable = (TileEntityBiggerCreatingTable<?>) world.getTileEntity(blockPos);
 		if (tileEntityBiggerCreatingTable != null) {
 			final ItemStack droppedStack = new ItemStack(this, 1, getMetaFromState(blockState));
-			final NBTTagCompound nbtTagCompound = tileEntityBiggerCreatingTable.writeCustomNBT(new NBTTagCompound());
-			if (nbtTagCompound.getTagList("Contents", 10).tagCount() > 0)
-				droppedStack.setTagCompound(nbtTagCompound);
+			if (Config.INSTANCE.shouldKeepContents) {
+				final NBTTagCompound nbtTagCompound = tileEntityBiggerCreatingTable.writeCustomNBT(new NBTTagCompound());
+				if (nbtTagCompound.getTagList("Contents", 10).tagCount() > 0)
+					droppedStack.setTagCompound(nbtTagCompound);
+			}
 			world.spawnEntity(new EntityItem(world, blockPos.getX() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getY() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, blockPos.getZ() + Reference.RANDOM.nextFloat() * 0.8F + 0.1F, droppedStack));
 		}
 		super.breakBlock(world, blockPos, blockState);

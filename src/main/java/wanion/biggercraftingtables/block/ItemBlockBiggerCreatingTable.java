@@ -37,7 +37,7 @@ public final class ItemBlockBiggerCreatingTable extends ItemBlock
 	}
 
 	@Override
-	public String getUnlocalizedName(final ItemStack itemStack)
+	public String getUnlocalizedNameInefficiently(final ItemStack itemStack)
 	{
 		return "container." + Reference.TableTypes.getName(getDamage(itemStack)) + "creatingtable";
 	}
