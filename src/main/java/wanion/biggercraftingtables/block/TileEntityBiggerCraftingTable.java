@@ -21,7 +21,7 @@ public abstract class TileEntityBiggerCraftingTable extends WTileEntity implemen
 	@Override
 	public int getInventoryStackLimit()
 	{
-		return Config.INSTANCE.stackSize;
+		return Config.INSTANCE.maxStackSize;
 	}
 
 	@Nonnull

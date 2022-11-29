@@ -25,20 +25,20 @@ public final class Config
 	public final int capacityMultiplier;
 
 	public final boolean shouldKeepContents;
-	public final int stackSize;
+	public final int maxStackSize;
 
 	private Config()
 	{
 		final Configuration config = new Configuration(new File("." + separatorChar + "config" + separatorChar + Reference.MOD_NAME.replace(" ", Strings.EMPTY) + ".cfg"), Reference.MOD_VERSION);
 
-		createTableRecipes = config.getBoolean("createTableRecipes", Configuration.CATEGORY_GENERAL, true, "Should be created recipes for the Tables?");
+		createTableRecipes = config.getBoolean("createTableRecipes", Configuration.CATEGORY_GENERAL, false, "Should be created recipes for the Tables?");
 		powerMultiplier = config.getInt("powerMultiplier", Configuration.CATEGORY_GENERAL, 10, 1, Short.MAX_VALUE, "Formula: powerConsumption = craftingSlotAmount * powerMultiplier");
 		capacityMultiplier = config.getInt("capacityMultiplier", Configuration.CATEGORY_GENERAL, 100, 1, Short.MAX_VALUE, "Formula: capacity = powerConsumption * capacityMultiplier");
 
 		shouldKeepContents = config.getBoolean("shouldKeepContents", Configuration.CATEGORY_GENERAL, false, "Should the tables keep their contents when Broken? Note: As of currently, items inside of tables get deleted when the table is broken. I was not bothered to spend time figuring out how to convert the NBT tag to an array of ItemStacks to spawn into the world as entities.");
-		stackSize = config.getInt("stackSize", Configuration.CATEGORY_GENERAL, 1, 1, Integer.MAX_VALUE, "The maximum stack size of the slots in the tables.");
+		maxStackSize = config.getInt("maxStackSize", Configuration.CATEGORY_GENERAL, 1, 1, Integer.MAX_VALUE, "The maximum stack size of the slots in the tables.");
 
-		config.setCategoryPropertyOrder(Configuration.CATEGORY_GENERAL, Arrays.asList("createTableRecipes", "powerMultiplier", "capacityMultiplier", "shouldKeepContents"));
+		config.setCategoryPropertyOrder(Configuration.CATEGORY_GENERAL, Arrays.asList("createTableRecipes", "powerMultiplier", "capacityMultiplier", "shouldKeepContents", "maxStackSize"));
 
 		if (config.hasChanged())
 			config.save();
